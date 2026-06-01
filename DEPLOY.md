@@ -15,16 +15,23 @@ Trước khi cài đặt, hãy đảm bảo máy chủ đã cài đặt các th�
 ## 2. Các bước triển khai chi tiết
 
 ### Bước 1: Clone mã nguồn trực tiếp vào thư mục root của website
-Kết nối SSH vào máy chủ aaPanel và chạy các lệnh sau để clone mã nguồn từ GitHub trực tiếp vào thư mục root của website (ví dụ thư mục `kd.cuongdesign.net` do aaPanel tạo ra):
+Kết nối SSH vào máy chủ aaPanel và chạy các lệnh sau. Do aaPanel tự động tạo và khóa file hệ thống `.user.ini` khiến thư mục không trống, ta cần mở khóa và tạo lại thư mục trống để clone:
 
 ```bash
-# Di chuyển đến thư mục website
-cd /www/wwwroot/kd.cuongdesign.net
+# 1. Di chuyển vào thư mục chứa các website của aaPanel
+cd /www/wwwroot
 
-# Xóa các file mặc định của aaPanel (như index.html, 404.html, .htaccess...) để thư mục trống hoàn toàn
-rm -rf * .htaccess
+# 2. Mở khóa file hệ thống .user.ini được aaPanel bảo vệ (nếu có)
+chattr -i kd.cuongdesign.net/.user.ini
 
-# Clone repository từ GitHub trực tiếp vào thư mục hiện tại (lưu ý có dấu chấm . ở cuối)
+# 3. Xóa thư mục cũ cùng các file mặc định
+rm -rf kd.cuongdesign.net
+
+# 4. Tạo lại thư mục trống hoàn toàn
+mkdir kd.cuongdesign.net
+
+# 5. Di chuyển vào thư mục và thực hiện clone trực tiếp (lưu ý có dấu chấm . ở cuối)
+cd kd.cuongdesign.net
 git clone https://github.com/cuongdesignnb/resort.git .
 ```
 
