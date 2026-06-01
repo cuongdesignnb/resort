@@ -2,7 +2,7 @@
 
 import React, { useActionState } from 'react';
 import { loginAction } from './actions';
-import { Mail, Lock, AlertCircle, ArrowRight, LockKeyhole, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ArrowRight, LockKeyhole } from 'lucide-react';
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
@@ -110,24 +110,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Account & Password Info Card */}
-          <div className="p-4 bg-emerald-950/20 border border-emerald-500/15 rounded-2xl space-y-2">
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
-              <ShieldCheck className="h-4 w-4" />
-              <span>Tài khoản truy cập mặc định:</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-medium">
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Email:</span>
-                <code className="text-emerald-300 font-mono bg-slate-950/30 px-1.5 py-0.5 rounded border border-slate-800/40">admin@resort.com</code>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Mật khẩu:</span>
-                <code className="text-emerald-300 font-mono bg-slate-950/30 px-1.5 py-0.5 rounded border border-slate-800/40">admin123</code>
-              </div>
-            </div>
-          </div>
 
           {/* Footer Notice */}
           <div className="text-center pt-2">
