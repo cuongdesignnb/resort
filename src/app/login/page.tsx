@@ -35,7 +35,7 @@ export default function LoginPage() {
               </p>
               <div className="pt-2">
                 <p className="text-[10px] text-amber-500/90 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl max-w-[300px] mx-auto leading-normal font-medium">
-                  ⚠️ <strong>Funny:</strong> Phần mềm tạo ra với mục đích phải đi làm về sớm nếu không sẽ không thể truy cập được
+                  ⚠️ <strong>Cảnh báo:</strong> Phần mềm chỉ hoạt động tới 5h chiều hàng ngày - nếu quá số giờ cho phép phần mềm sẽ không hoạt động !
                 </p>
               </div>
             </div>
