@@ -98,28 +98,28 @@ export default async function RevenueReportPage() {
         <div className="glass-card p-5 space-y-1.5">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Tổng Doanh Thu</span>
           <h3 className="font-outfit font-bold text-xl text-emerald-600 dark:text-emerald-400">
-            {totalRev.toLocaleString('vi-VN')} đ
+            {Math.round(totalRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Hạch toán thực tế phát sinh</p>
         </div>
         <div className="glass-card p-5 space-y-1.5">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Doanh Thu Phòng</span>
           <h3 className="font-outfit font-bold text-xl text-blue-600 dark:text-blue-400">
-            {roomRev.toLocaleString('vi-VN')} đ
+            {Math.round(roomRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Tỷ lệ: {((roomRev / totalRev) * 100 || 0).toFixed(0)}%</p>
         </div>
         <div className="glass-card p-5 space-y-1.5">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Doanh Thu F&B</span>
           <h3 className="font-outfit font-bold text-xl text-amber-600 dark:text-amber-400">
-            {foodRev.toLocaleString('vi-VN')} đ
+            {Math.round(foodRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Tỷ lệ: {((foodRev / totalRev) * 100 || 0).toFixed(0)}%</p>
         </div>
         <div className="glass-card p-5 space-y-1.5">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Doanh Thu Dịch Vụ Khác</span>
           <h3 className="font-outfit font-bold text-xl text-purple-600 dark:text-purple-400">
-            {serviceRev.toLocaleString('vi-VN')} đ
+            {Math.round(serviceRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Tỷ lệ: {((serviceRev / totalRev) * 100 || 0).toFixed(0)}%</p>
         </div>
@@ -140,7 +140,7 @@ export default async function RevenueReportPage() {
                 <div key={name} className="space-y-1.5 text-xs">
                   <div className="flex justify-between font-semibold">
                     <span>{index + 1}. {name}</span>
-                    <span>{val.toLocaleString('vi-VN')} đ ({pct.toFixed(0)}%)</span>
+                    <span>{Math.round(val).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ ({pct.toFixed(0)}%)</span>
                   </div>
                   <div className="w-full bg-[var(--muted-bg)] h-2 rounded-full overflow-hidden">
                     <div className="bg-amber-500 h-full rounded-full" style={{ width: `${pct}%` }} />
@@ -164,7 +164,7 @@ export default async function RevenueReportPage() {
                 <div key={name} className="space-y-1.5 text-xs">
                   <div className="flex justify-between font-semibold">
                     <span>{index + 1}. {name}</span>
-                    <span>{val.toLocaleString('vi-VN')} đ ({pct.toFixed(0)}%)</span>
+                    <span>{Math.round(val).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ ({pct.toFixed(0)}%)</span>
                   </div>
                   <div className="w-full bg-[var(--muted-bg)] h-2 rounded-full overflow-hidden">
                     <div className="bg-emerald-600 h-full rounded-full" style={{ width: `${pct}%` }} />
@@ -217,9 +217,9 @@ export default async function RevenueReportPage() {
                     </td>
                     <td className="py-3 px-4 font-medium">{b.bookingName}</td>
                     <td className="py-3 px-4">{b.phone || '-'}</td>
-                    <td className="py-3 px-4 text-right">{b.total.toLocaleString('vi-VN')} đ</td>
-                    <td className="py-3 px-4 text-right text-emerald-600 font-semibold">{b.deposit.toLocaleString('vi-VN')} đ</td>
-                    <td className="py-3 px-4 text-right text-red-500 font-bold">{b.remaining.toLocaleString('vi-VN')} đ</td>
+                    <td className="py-3 px-4 text-right">{Math.round(b.total).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ</td>
+                    <td className="py-3 px-4 text-right text-emerald-600 font-semibold">{Math.round(b.deposit).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ</td>
+                    <td className="py-3 px-4 text-right text-red-500 font-bold">{Math.round(b.remaining).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ</td>
                     <td className="py-3 px-4 text-center">
                       <span className="bg-red-100 text-red-700 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded-full text-[10px] font-bold">
                         {b.status}

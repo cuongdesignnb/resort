@@ -25,16 +25,17 @@ interface SearchParams {
 
 // Format currency into standard compact Vietnamese terms (Nghìn Tỷ, Tỷ, Triệu)
 function formatCompactVNCurrency(value: number): string {
-  if (value >= 1e12) {
-    return (value / 1e12).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Nghìn Tỷ';
+  const rounded = Math.round(value);
+  if (rounded >= 1e12) {
+    return (rounded / 1e12).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Nghìn Tỷ';
   }
-  if (value >= 1e9) {
-    return (value / 1e9).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Tỷ';
+  if (rounded >= 1e9) {
+    return (rounded / 1e9).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Tỷ';
   }
-  if (value >= 1e6) {
-    return (value / 1e6).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' Tr';
+  if (rounded >= 1e6) {
+    return (rounded / 1e6).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' Tr';
   }
-  return value.toLocaleString('vi-VN') + ' đ';
+  return rounded.toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' đ';
 }
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -274,16 +275,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <span className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider block">Tổng Doanh Thu</span>
             <h3 
               className="font-outfit font-bold text-2xl text-emerald-600 dark:text-emerald-400 cursor-help truncate"
-              title={totalRev.toLocaleString('vi-VN') + ' đ'}
+              title={Math.round(totalRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' đ'}
             >
               {formatCompactVNCurrency(totalRev)}
             </h3>
             <p className="text-[9px] text-[var(--muted)] font-mono tracking-tighter">
-              {totalRev.toLocaleString('vi-VN')} đ
+              {Math.round(totalRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
             </p>
             <p 
               className="text-[10px] text-[var(--muted)] truncate"
-              title={`Phòng: ${roomRev.toLocaleString('vi-VN')} đ | F&B: ${foodRev.toLocaleString('vi-VN')} đ | Dịch vụ: ${serviceRev.toLocaleString('vi-VN')} đ`}
+              title={`Phòng: ${Math.round(roomRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ | F&B: ${Math.round(foodRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ | Dịch vụ: ${Math.round(serviceRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ`}
             >
               Phòng: {formatCompactVNCurrency(roomRev)}
             </p>

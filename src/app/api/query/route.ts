@@ -138,10 +138,10 @@ export async function POST(request: NextRequest) {
       const totalRev = roomRev + foodRev + serviceRev;
 
       responseText = `**Doanh thu dự kiến cho Tháng ${targetMonth}/${job?.year}:**\n\n` +
-        `- 🏨 Doanh thu phòng: **${roomRev.toLocaleString('vi-VN')} đ**\n` +
-        `- 🍽️ Doanh thu ẩm thực (F&B): **${foodRev.toLocaleString('vi-VN')} đ**\n` +
-        `- 💆 Doanh thu dịch vụ khác (Spa, Tour...): **${serviceRev.toLocaleString('vi-VN')} đ**\n` +
-        `➡️ **TỔNG DOANH THU: ${totalRev.toLocaleString('vi-VN')} đ**`;
+        `- 🏨 Doanh thu phòng: **${Math.round(roomRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ**\n` +
+        `- 🍽️ Doanh thu ẩm thực (F&B): **${Math.round(foodRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ**\n` +
+        `- 💆 Doanh thu dịch vụ khác (Spa, Tour...): **${Math.round(serviceRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ**\n` +
+        `➡️ **TỔNG DOANH THU: ${Math.round(totalRev).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ**`;
       return NextResponse.json({ answer: responseText });
     }
 
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
         responseText = `Chưa ghi nhận doanh thu cho nhân viên sale nào.`;
       } else {
         responseText = `**Xếp hạng doanh thu theo nhân viên Sale:**\n\n` +
-          sortedSales.map((s, idx) => `${idx + 1}. **${s[0]}**: ${s[1].toLocaleString('vi-VN')} đ`).join('\n');
+          sortedSales.map((s, idx) => `${idx + 1}. **${s[0]}**: ${Math.round(s[1]).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ`).join('\n');
       }
       return NextResponse.json({ answer: responseText });
     }

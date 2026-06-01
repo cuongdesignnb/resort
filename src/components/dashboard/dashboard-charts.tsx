@@ -39,15 +39,20 @@ interface DashboardChartsProps {
 export default function DashboardCharts({ stats }: DashboardChartsProps) {
   // Format numbers to short text (e.g. 1M, 500k)
   const formatCurrencyShort = (val: number) => {
-    if (val >= 1e12) return `${(val / 1e12).toFixed(1)} Nghìn Tỷ`;
-    if (val >= 1e9) return `${(val / 1e9).toFixed(1)} Tỷ`;
-    if (val >= 1e6) return `${(val / 1e6).toFixed(1)} Tr`;
-    if (val >= 1e3) return `${(val / 1e3).toFixed(0)} k`;
-    return String(val);
+    const rounded = Math.round(val);
+    if (rounded >= 1e12) return `${(rounded / 1e12).toFixed(1)} Nghìn Tỷ`;
+    if (rounded >= 1e9) return `${(rounded / 1e9).toFixed(1)} Tỷ`;
+    if (rounded >= 1e6) return `${(rounded / 1e6).toFixed(1)} Tr`;
+    if (rounded >= 1e3) return `${(rounded / 1e3).toFixed(0)} k`;
+    return rounded.toLocaleString('vi-VN', { maximumFractionDigits: 0 });
   };
 
   const formatVNCurrency = (val: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+    return new Intl.NumberFormat('vi-VN', { 
+      style: 'currency', 
+      currency: 'VND',
+      maximumFractionDigits: 0 
+    }).format(Math.round(val));
   };
 
   // Pie chart data for revenue distribution

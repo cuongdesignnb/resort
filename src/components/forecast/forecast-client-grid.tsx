@@ -71,7 +71,11 @@ export default function ForecastClientGrid({ cells, bookings, month, year }: For
   const channels = ['ALL', ...Array.from(new Set(bookings.map((b) => b.channel).filter(Boolean)))];
 
   const formatVNCurrency = (val: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+    return new Intl.NumberFormat('vi-VN', { 
+      style: 'currency', 
+      currency: 'VND',
+      maximumFractionDigits: 0 
+    }).format(Math.round(val));
   };
 
   // Get total days in the month
@@ -462,12 +466,12 @@ export default function ForecastClientGrid({ cells, bookings, month, year }: For
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border)]/40">
-                      {selectedBooking.rooms.map((r) => (
+                      {selectedBooking.rooms.map((r: any) => (
                         <tr key={r.id}>
                           <td className="py-2.5 font-bold">{r.roomName}</td>
                           <td className="py-2.5">{r.roomType}</td>
                           <td className="py-2.5 text-center">{r.nights}</td>
-                          <td className="py-2.5 text-right font-semibold">{r.amount.toLocaleString('vi-VN')} đ</td>
+                          <td className="py-2.5 text-right font-semibold">{Math.round(r.amount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ</td>
                         </tr>
                       ))}
                     </tbody>
@@ -503,7 +507,7 @@ export default function ForecastClientGrid({ cells, bookings, month, year }: For
                           <td className="py-2.5 text-center">
                             {m.quantity} {m.unit} ({m.paxCount} pax)
                           </td>
-                          <td className="py-2.5 text-right font-semibold">{m.amount.toLocaleString('vi-VN')} đ</td>
+                          <td className="py-2.5 text-right font-semibold">{Math.round(m.amount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ</td>
                         </tr>
                       ))}
                     </tbody>
@@ -522,19 +526,19 @@ export default function ForecastClientGrid({ cells, bookings, month, year }: For
                     <div>
                       <p className="text-[10px] text-[var(--muted)]">Tổng Tiền Bill</p>
                       <p className="font-bold text-sm text-[var(--foreground)]">
-                        {selectedBooking.payment.totalAmount.toLocaleString('vi-VN')} đ
+                        {Math.round(selectedBooking.payment.totalAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
                       </p>
                     </div>
                     <div>
                       <p className="text-[10px] text-[var(--muted)]">Tiền Cọc</p>
                       <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400">
-                        {selectedBooking.payment.depositAmount.toLocaleString('vi-VN')} đ
+                        {Math.round(selectedBooking.payment.depositAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
                       </p>
                     </div>
                     <div>
                       <p className="text-[10px] text-[var(--muted)]">Còn Phải Thu</p>
                       <p className="font-bold text-sm text-red-500">
-                        {selectedBooking.payment.remainingAmount.toLocaleString('vi-VN')} đ
+                        {Math.round(selectedBooking.payment.remainingAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
                       </p>
                     </div>
                   </div>

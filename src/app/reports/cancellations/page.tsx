@@ -68,14 +68,14 @@ export default async function CancellationsReportPage() {
         <div className="glass-card p-5 space-y-1.5 border-l-4 border-l-red-400">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Doanh Thu Mất Đi</span>
           <h3 className="font-outfit font-bold text-xl text-red-600 dark:text-red-400">
-            {totalLostRevenue.toLocaleString('vi-VN')} đ
+            {Math.round(totalLostRevenue).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Tổng giá trị bill dự tính ban đầu</p>
         </div>
         <div className="glass-card p-5 space-y-1.5 border-l-4 border-l-emerald-500">
           <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Tiền Cọc Thu Được</span>
           <h3 className="font-outfit font-bold text-xl text-emerald-600 dark:text-emerald-400">
-            {totalDepositsKept.toLocaleString('vi-VN')} đ
+            {Math.round(totalDepositsKept).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ
           </h3>
           <p className="text-[10px] text-[var(--muted)]">Giữ lại theo quy chế cọc hủy phòng</p>
         </div>
@@ -124,8 +124,8 @@ export default async function CancellationsReportPage() {
                     <td className="py-3.5 px-4 font-medium">{b.bookingName}</td>
                     <td className="py-3.5 px-4 text-xs">{format(b.checkinAt, 'dd/MM/yyyy')}</td>
                     <td className="py-3.5 px-4 text-center font-semibold">{b.totalRooms} phòng</td>
-                    <td className="py-3.5 px-4 text-right text-red-500 font-bold">{b.payment ? b.payment.totalAmount.toLocaleString('vi-VN') : '0'} đ</td>
-                    <td className="py-3.5 px-4 text-right text-emerald-600 font-semibold">{b.payment ? b.payment.depositAmount.toLocaleString('vi-VN') : '0'} đ</td>
+                    <td className="py-3.5 px-4 text-right text-red-500 font-bold">{b.payment ? Math.round(b.payment.totalAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) : '0'} đ</td>
+                    <td className="py-3.5 px-4 text-right text-emerald-600 font-semibold">{b.payment ? Math.round(b.payment.depositAmount).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) : '0'} đ</td>
                     <td className="py-3.5 px-4 font-medium">{b.saleName || '-'}</td>
                     <td className="py-3.5 px-4 text-xs text-[var(--muted)] max-w-[200px] truncate" title={b.rawText || undefined}>
                       {b.rawText?.match(/Reason:\s*(.*)/)?.[1] || b.rawText?.substring(0, 50) || 'Hủy theo quy ước màu đỏ'}

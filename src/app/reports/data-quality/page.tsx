@@ -87,8 +87,8 @@ export default async function DataQualityReportPage() {
         type: 'Booking Payment',
         identifier: b.bookingCode,
         level: 'REVIEW',
-        message: `Tổng số tiền hạch toán chi tiết (${calcTotal.toLocaleString('vi-VN')} đ) lệch so với số tổng thanh toán trên voucher (${statedTotal.toLocaleString('vi-VN')} đ).`,
-        rawText: `Phòng: ${roomAmt.toLocaleString()} đ | Ăn uống: ${mealAmt.toLocaleString()} đ | Dịch vụ: ${serviceAmt.toLocaleString()} đ | Giảm giá: ${discount.toLocaleString()} đ`,
+        message: `Tổng số tiền hạch toán chi tiết (${Math.round(calcTotal).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ) lệch so với số tổng thanh toán trên voucher (${Math.round(statedTotal).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ).`,
+        rawText: `Phòng: ${Math.round(roomAmt).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ | Ăn uống: ${Math.round(mealAmt).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ | Dịch vụ: ${Math.round(serviceAmt).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ | Giảm giá: ${Math.round(discount).toLocaleString('vi-VN', { maximumFractionDigits: 0 })} đ`,
         sourceUrl: b.sourceUrl,
       });
     }
