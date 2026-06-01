@@ -39,8 +39,10 @@ interface DashboardChartsProps {
 export default function DashboardCharts({ stats }: DashboardChartsProps) {
   // Format numbers to short text (e.g. 1M, 500k)
   const formatCurrencyShort = (val: number) => {
-    if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-    if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
+    if (val >= 1e12) return `${(val / 1e12).toFixed(1)} Nghìn Tỷ`;
+    if (val >= 1e9) return `${(val / 1e9).toFixed(1)} Tỷ`;
+    if (val >= 1e6) return `${(val / 1e6).toFixed(1)} Tr`;
+    if (val >= 1e3) return `${(val / 1e3).toFixed(0)} k`;
     return String(val);
   };
 
@@ -127,7 +129,9 @@ export default function DashboardCharts({ stats }: DashboardChartsProps) {
                 <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
                 <span className="text-[var(--muted)]">{item.name}</span>
               </div>
-              <span className="font-bold">{formatVNCurrency(item.value)}</span>
+              <span className="font-bold cursor-help" title={formatVNCurrency(item.value)}>
+                {formatCurrencyShort(item.value)}
+              </span>
             </div>
           ))}
         </div>

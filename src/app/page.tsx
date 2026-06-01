@@ -23,6 +23,20 @@ interface SearchParams {
   jobId?: string;
 }
 
+// Format currency into standard compact Vietnamese terms (Nghìn Tỷ, Tỷ, Triệu)
+function formatCompactVNCurrency(value: number): string {
+  if (value >= 1e12) {
+    return (value / 1e12).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Nghìn Tỷ';
+  }
+  if (value >= 1e9) {
+    return (value / 1e9).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' Tỷ';
+  }
+  if (value >= 1e6) {
+    return (value / 1e6).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' Tr';
+  }
+  return value.toLocaleString('vi-VN') + ' đ';
+}
+
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { jobId } = await searchParams;
 
@@ -114,6 +128,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     displaySub = `File đang xem: ${selectedJob.fileName}`;
   }
 
+  // Fetch unique room numbers to determine capacity dynamically (fixes hardcoded 5 rooms bug)
+  const uniqueRooms = await prisma.forecastCell.findMany({
+    where: isAllTime 
+      ? { importJob: { status: 'SUCCESS' } } 
+      : { importJobId: activeJobId },
+    select: { roomNumber: true },
+    distinct: ['roomNumber'],
+  });
+  const totalActiveRooms = uniqueRooms.length || 5;
+
   // Aggregate metrics
   const totalRev = stats.reduce((sum, s) => sum + s.totalRevenue, 0);
   const roomRev = stats.reduce((sum, s) => sum + s.roomRevenue, 0);
@@ -122,8 +146,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   const roomSoldTotal = stats.reduce((sum, s) => sum + s.roomSold, 0);
   
-  // Occupancy rate calculation (Capacity: 5 rooms total * number of days monitored)
-  const totalOccupancy = stats.length > 0 ? (roomSoldTotal / (5 * stats.length)) * 100 : 0;
+  // Occupancy rate calculation (Capacity: total active rooms * number of days monitored)
+  const totalOccupancy = stats.length > 0 ? (roomSoldTotal / (totalActiveRooms * stats.length)) * 100 : 0;
   
   const totalCheckinGuests = bookings.filter(b => b.status !== 'CANCELLED').reduce((sum, b) => sum + b.totalGuests, 0);
   const totalCancellations = bookings.filter(b => b.status === 'CANCELLED').length;
@@ -175,7 +199,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       return {
         date: m.date,
         roomSold: m.roomSold,
-        occupancy: (m.roomSold / (5 * m.daysCount)) * 100,
+        occupancy: (m.roomSold / (totalActiveRooms * m.daysCount)) * 100,
         roomRevenue: m.roomRevenue,
         foodRevenue: m.foodRevenue,
         serviceRevenue: m.serviceRevenue,
@@ -192,7 +216,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     chartsData = stats.map((s) => ({
       date: format(s.statDate, 'dd/MM'),
       roomSold: s.roomSold,
-      occupancy: (s.roomSold / 5) * 100,
+      occupancy: (s.roomSold / totalActiveRooms) * 100,
       roomRevenue: s.roomRevenue,
       foodRevenue: s.foodRevenue,
       serviceRevenue: s.serviceRevenue,
@@ -246,16 +270,25 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* KPI 1: Revenue */}
         <div className="glass-card p-6 flex items-center justify-between group hover:scale-[1.01] transition-all">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider">Tổng Doanh Thu</span>
-            <h3 className="font-outfit font-bold text-2xl text-emerald-600 dark:text-emerald-400">
-              {totalRev.toLocaleString('vi-VN')} đ
+          <div className="space-y-1 w-full">
+            <span className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider block">Tổng Doanh Thu</span>
+            <h3 
+              className="font-outfit font-bold text-2xl text-emerald-600 dark:text-emerald-400 cursor-help truncate"
+              title={totalRev.toLocaleString('vi-VN') + ' đ'}
+            >
+              {formatCompactVNCurrency(totalRev)}
             </h3>
-            <p className="text-[10px] text-[var(--muted)]">
-              Phòng: {roomRev.toLocaleString('vi-VN')} đ
+            <p className="text-[9px] text-[var(--muted)] font-mono tracking-tighter">
+              {totalRev.toLocaleString('vi-VN')} đ
+            </p>
+            <p 
+              className="text-[10px] text-[var(--muted)] truncate"
+              title={`Phòng: ${roomRev.toLocaleString('vi-VN')} đ | F&B: ${foodRev.toLocaleString('vi-VN')} đ | Dịch vụ: ${serviceRev.toLocaleString('vi-VN')} đ`}
+            >
+              Phòng: {formatCompactVNCurrency(roomRev)}
             </p>
           </div>
-          <div className="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center">
+          <div className="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
             <DollarSign className="h-6 w-6" />
           </div>
         </div>
@@ -270,6 +303,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <p className="text-[10px] text-[var(--muted)]">
               Lượt phòng bán: {roomSoldTotal} PN
             </p>
+            <p className="text-[9px] text-slate-500 font-medium">
+              Quy mô: {totalActiveRooms} phòng hoạt động
+            </p>
           </div>
           <div className="h-12 w-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center">
             <Hotel className="h-6 w-6" />
@@ -281,7 +317,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <div className="space-y-1">
             <span className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider">Lượt Khách Đến</span>
             <h3 className="font-outfit font-bold text-2xl text-blue-600 dark:text-blue-400">
-              {totalCheckinGuests} khách
+              {totalCheckinGuests.toLocaleString('vi-VN')} khách
             </h3>
             <p className="text-[10px] text-[var(--muted)]">
               Đoàn hủy: {totalCancellations} booking
