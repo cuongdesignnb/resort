@@ -123,7 +123,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
   job.dailyStats.forEach((s, idx) => {
     const rowNum = idx + 2;
     dailySheet.getRow(rowNum).values = [
-      format(s.statDate, 'yyyy-MM-dd'),
+      format(s.statDate, 'dd/MM/yyyy'),
       s.roomSold,
       s.roomRevenue,
       s.foodRevenue,
@@ -181,8 +181,8 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
     bookingsSheet.getRow(rowNum).values = [
       b.bookingCode,
       b.bookingName,
-      format(b.checkinAt, 'yyyy-MM-dd'),
-      format(b.checkoutAt, 'yyyy-MM-dd'),
+      format(b.checkinAt, 'dd/MM/yyyy'),
+      format(b.checkoutAt, 'dd/MM/yyyy'),
       b.totalRooms,
       b.totalGuests,
       b.adults,
@@ -235,7 +235,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
     b.meals.forEach((m) => {
       const rowNum = mealIdx + 2;
       mealsSheet.getRow(rowNum).values = [
-        format(m.mealDate, 'yyyy-MM-dd'),
+        format(m.mealDate, 'dd/MM/yyyy'),
         b.bookingCode,
         b.bookingName,
         m.mealType,
@@ -295,7 +295,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
         b.bookingName,
         'Accommodation',
         `${r.roomName} (${r.roomType}) - ${r.nights} nights`,
-        format(b.checkinAt, 'yyyy-MM-dd'),
+        format(b.checkinAt, 'dd/MM/yyyy'),
         r.quantity,
         r.unitPrice,
         r.amount,
@@ -320,7 +320,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
         b.bookingName,
         'Food & Beverage',
         m.serviceName,
-        format(m.mealDate, 'yyyy-MM-dd'),
+        format(m.mealDate, 'dd/MM/yyyy'),
         m.quantity,
         m.unitPrice,
         m.amount,
@@ -342,7 +342,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
         b.bookingName,
         'Extra Service',
         s.serviceName,
-        format(s.serviceDate, 'yyyy-MM-dd'),
+        format(s.serviceDate, 'dd/MM/yyyy'),
         s.quantity,
         s.unitPrice,
         s.amount,
@@ -385,7 +385,7 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
           roomsSheet.getRow(rowNum).values = [
             r.roomName,
             r.roomType,
-            dayStr,
+            format(day.statDate, 'dd/MM/yyyy'),
             b.bookingCode,
             b.bookingName,
             'OCCUPIED'
@@ -418,8 +418,8 @@ export async function exportReportToExcel(importJobId: string): Promise<Buffer> 
     cancelSheet.getRow(rowNum).values = [
       b.bookingCode,
       b.bookingName,
-      format(b.checkinAt, 'yyyy-MM-dd'),
-      format(b.checkoutAt, 'yyyy-MM-dd'),
+      format(b.checkinAt, 'dd/MM/yyyy'),
+      format(b.checkoutAt, 'dd/MM/yyyy'),
       b.totalGuests,
       b.totalRooms,
       pay ? pay.depositAmount : 0,

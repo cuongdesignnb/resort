@@ -604,11 +604,11 @@ export default function BookingsClientTable({ bookings }: BookingsClientTablePro
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border)]/40">
-                      {selectedBooking.services.map((s) => (
-                        <tr key={s.id}>
-                          <td className="py-2.5">{format(new Date(s.serviceDate), 'dd/MM')}</td>
-                          <td className="py-2.5">{s.serviceName}</td>
-                          <td className="py-2.5 text-center">{s.quantity}</td>
+                        {selectedBooking.services.map((s) => (
+                          <tr key={s.id}>
+                            <td className="py-2.5">{format(new Date(s.serviceDate), 'dd/MM/yyyy')}</td>
+                            <td className="py-2.5">{s.serviceName}</td>
+                            <td className="py-2.5 text-center">{s.quantity}</td>
                           <td className="py-2.5 text-right">{s.unitPrice.toLocaleString('vi-VN')} đ</td>
                           <td className="py-2.5 text-right font-semibold">{s.amount.toLocaleString('vi-VN')} đ</td>
                         </tr>
