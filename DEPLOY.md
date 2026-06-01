@@ -14,18 +14,18 @@ Trước khi cài đặt, hãy đảm bảo máy chủ đã cài đặt các th�
 
 ## 2. Các bước triển khai chi tiết
 
-### Bước 1: Clone mã nguồn về máy chủ aaPanel
-Kết nối SSH vào máy chủ aaPanel và chạy các lệnh sau để clone mã nguồn từ GitHub vào thư mục `/www/wwwroot/resort`:
+### Bước 1: Clone mã nguồn trực tiếp vào thư mục root của website
+Kết nối SSH vào máy chủ aaPanel và chạy các lệnh sau để clone mã nguồn từ GitHub trực tiếp vào thư mục root của website (ví dụ thư mục `kd.cuongdesign.net` do aaPanel tạo ra):
 
 ```bash
-# Di chuyển đến thư mục chứa website của aaPanel
-cd /www/wwwroot
+# Di chuyển đến thư mục website
+cd /www/wwwroot/kd.cuongdesign.net
 
-# Clone repository từ GitHub
-git clone https://github.com/cuongdesignnb/resort.git
+# Xóa các file mặc định của aaPanel (như index.html, 404.html, .htaccess...) để thư mục trống hoàn toàn
+rm -rf * .htaccess
 
-# Di chuyển vào thư mục dự án
-cd resort
+# Clone repository từ GitHub trực tiếp vào thư mục hiện tại (lưu ý có dấu chấm . ở cuối)
+git clone https://github.com/cuongdesignnb/resort.git .
 ```
 
 ### Bước 2: Cấu hình biến môi trường (`.env`)
@@ -41,7 +41,7 @@ Bạn có thể chỉnh sửa file `.env` trực tiếp trên aaPanel File Manag
 - Thêm các biến môi trường khác cho AI Assistant hoặc Google Sheets Sync nếu có.
 
 ### Bước 3: Khởi chạy Docker Compose
-Bên trong thư mục `/www/wwwroot/resort`, hãy build và khởi chạy các container bằng lệnh sau:
+Bên trong thư mục website (`/www/wwwroot/kd.cuongdesign.net`), hãy build và khởi chạy các container bằng lệnh sau:
 
 ```bash
 docker compose up -d --build
@@ -51,7 +51,7 @@ Lệnh này sẽ thực hiện các việc sau:
 1. Tải image PostgreSQL.
 2. Build Docker image cho Next.js Web app (chạy Prisma generate, Next.js build).
 3. Tự động chạy `npx prisma db push` để tạo cấu trúc bảng cơ sở dữ liệu trên Postgres.
-4. Chạy ứng dụng web tại port `3000`.
+4. Chạy ứng dụng web tại port `3099` (đã được map từ port 3000 của container ra cổng 3099 của máy chủ).
 
 Bạn có thể kiểm tra trạng thái hoạt động của các container:
 ```bash
@@ -62,7 +62,7 @@ docker compose ps
 
 ## 3. Cấu hình Reverse Proxy & SSL trên aaPanel
 
-Để người dùng có thể truy cập qua tên miền `kd.cuongdesign.net`, ta cần trỏ tên miền này vào port `3000` của Docker container thông qua Nginx Reverse Proxy.
+Để người dùng có thể truy cập qua tên miền `kd.cuongdesign.net`, ta cần trỏ tên miền này vào port `3099` của Docker container thông qua Nginx Reverse Proxy.
 
 ### Bước 3.1: Tạo Website trên aaPanel
 1. Vào **aaPanel** -> chọn menu **Website** -> Click **Add site**.
@@ -80,7 +80,7 @@ docker compose ps
 1. Vẫn trong bảng cấu hình Website đó, chọn menu **Reverse proxy** -> Click **Add reverse proxy**.
 2. Thiết lập cấu hình như sau:
    - **Proxy name**: Điền `resort-web` (hoặc tên bất kỳ bạn muốn).
-   - **Target URL**: Nhập `http://127.0.0.1:3000` (đây là địa chỉ Docker Web App đang lắng nghe).
+   - **Target URL**: Nhập `http://127.0.0.1:3099` (đây là địa chỉ Docker Web App đang lắng nghe).
    - **Sent Domain**: Điền `$host`.
 3. Nhấn **Submit** để lưu lại.
 
@@ -92,7 +92,7 @@ docker compose ps
 Mỗi khi có cập nhật mới trên GitHub và bạn muốn deploy bản mới nhất lên server:
 
 ```bash
-cd /www/wwwroot/resort
+cd /www/wwwroot/kd.cuongdesign.net
 # Pull code mới nhất
 git pull origin main
 

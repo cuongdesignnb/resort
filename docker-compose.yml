@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     container_name: resort-web
     ports:
-      - "3000:3000"
+      - "3099:3000"
     environment:
       - DATABASE_URL=postgresql://cuong:cuong_resort_password@postgres:5432/resort_db?schema=public
       - DEMO_MODE=true
