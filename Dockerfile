@@ -23,5 +23,5 @@ COPY --from=builder /app/mock_google_drive ./mock_google_drive
 
 EXPOSE 3000
 
-# Automatically run prisma db push to sync schema on startup, then start the server
-CMD ["sh", "-c", "npx prisma db push && npm run start"]
+# Automatically run prisma db push to sync schema on startup, then seed and start the server
+CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js && npm run start"]
