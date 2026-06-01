@@ -33,6 +33,11 @@ export default function LoginPage() {
               <p className="text-xs text-slate-400 max-w-[280px] mx-auto leading-relaxed">
                 Hệ thống Phân tích Đặt phòng & Dự báo Room Grid Nội bộ
               </p>
+              <div className="pt-2">
+                <p className="text-[10px] text-amber-500/90 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl max-w-[300px] mx-auto leading-normal font-medium">
+                  ⚠️ <strong>Funny:</strong> Phần mềm tạo ra với mục đích phải đi làm về sớm nếu không sẽ không thể truy cập được
+                </p>
+              </div>
             </div>
           </div>
 

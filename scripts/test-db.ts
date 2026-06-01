@@ -11,7 +11,7 @@ async function testConnection() {
 
     // 2. Perform a test seed of a default admin user
     console.log('Upserting default test user...');
-    const hashedDefaultPassword = hashPassword('admin123');
+    const hashedDefaultPassword = hashPassword('Vesom5h');
     
     const admin = await prisma.user.upsert({
       where: { email: 'admin@resort.com' },

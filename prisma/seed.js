@@ -10,7 +10,7 @@ function hashPassword(password) {
 
 async function main() {
   console.log('Seeding database...');
-  const hashedDefaultPassword = hashPassword('admin123');
+  const hashedDefaultPassword = hashPassword('Vesom5h');
   
   const admin = await prisma.user.upsert({
     where: { email: 'admin@resort.com' },
@@ -24,7 +24,7 @@ async function main() {
       role: 'ADMIN',
     },
   });
-  console.log(`Admin user seeded: email=admin@resort.com, password=admin123`);
+  console.log(`Admin user seeded: email=admin@resort.com, password=Vesom5h`);
 }
 
 main()
