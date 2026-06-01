@@ -1,0 +1,188 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  name         String?
+  passwordHash String?     @map("password_hash")
+  role         String      @default("USER")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  jobs         ImportJob[]
+
+  @@map("users")
+}
+
+model ImportJob {
+  id               String         @id @default(uuid())
+  userId           String?        @map("user_id")
+  user             User?          @relation(fields: [userId], references: [id])
+  sourceType       String         @map("source_type") // "FILE" or "GOOGLE_SHEET"
+  sourceUrl        String?        @map("source_url")
+  uploadedFileUrl  String?        @map("uploaded_file_url")
+  fileName         String         @map("file_name")
+  status           String         @default("PENDING") // PENDING, PROCESSING, SUCCESS, FAILED
+  month            Int
+  year             Int
+  startedAt        DateTime       @default(now()) @map("started_at")
+  finishedAt       DateTime?      @map("finished_at")
+  errorMessage     String?        @map("error_message")
+  cells            ForecastCell[]
+  bookings         Booking[]
+  dailyStats       DailyStat[]
+
+  @@map("import_jobs")
+}
+
+model ForecastCell {
+  id                 String    @id @default(uuid())
+  importJobId        String    @map("import_job_id")
+  importJob          ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  sheetName          String    @map("sheet_name")
+  forecastDate       DateTime  @map("forecast_date")
+  rowIndex           Int       @map("row_index")
+  columnIndex        Int       @map("column_index")
+  roomNumber         String    @map("room_number")
+  roomType           String    @map("room_type")
+  cellText           String?   @map("cell_text")
+  hyperlink          String?   @map("hyperlink")
+  statusText         String?   @map("status_text")
+  noteText           String?   @map("note_text")
+  fillColor          String?   @map("fill_color")
+  parsedBookingCode  String?   @map("parsed_booking_code")
+  booking            Booking?  @relation("CellToBooking")
+
+  @@map("forecast_cells")
+}
+
+model Booking {
+  id              String           @id @default(uuid())
+  importJobId     String           @map("import_job_id")
+  importJob       ImportJob        @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  bookingCode     String           @unique @map("booking_code")
+  bookingName     String           @map("booking_name")
+  customerName    String?          @map("customer_name")
+  companyName     String?          @map("company_name")
+  contactName     String?          @map("contact_name")
+  phone           String?          @map("phone")
+  email           String?          @map("email")
+  channel         String?          @map("channel") // OTA, TA, CTV, Retail, Company, etc.
+  saleName        String?          @map("sale_name")
+  sourceCellId    String?          @unique @map("source_cell_id")
+  sourceCell      ForecastCell?    @relation("CellToBooking", fields: [sourceCellId], references: [id], onDelete: SetNull)
+  sourceUrl       String?          @map("source_url")
+  checkinAt       DateTime         @map("checkin_at")
+  checkoutAt      DateTime         @map("checkout_at")
+  adults          Int              @default(0)
+  children6To11   Int              @default(0) @map("children_6_11")
+  childrenUnder6  Int              @default(0) @map("children_under_6")
+  totalGuests     Int              @default(0) @map("total_guests")
+  totalRooms      Int              @default(0) @map("total_rooms")
+  status          String           @default("CONFIRMED") // CONFIRMED, CANCELLED, etc.
+  needsReview     Boolean          @default(false) @map("needs_review")
+  rawText         String?          @map("raw_text")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  rooms           BookingRoom[]
+  meals           BookingMeal[]
+  services        BookingService[]
+  payment         BookingPayment?
+
+  @@map("bookings")
+}
+
+model BookingRoom {
+  id          String   @id @default(uuid())
+  bookingId   String   @map("booking_id")
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  roomName    String   @map("room_name")
+  roomType    String   @map("room_type")
+  quantity    Int      @default(1)
+  nights      Int      @default(1)
+  unitPrice   Float    @map("unit_price")
+  amount      Float
+
+  @@map("booking_rooms")
+}
+
+model BookingMeal {
+  id             String   @id @default(uuid())
+  bookingId      String   @map("booking_id")
+  booking        Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  mealType       String   @map("meal_type") // BREAKFAST, LUNCH, DINNER, GALA, BBQ, TEAMBUILDING, etc.
+  mealDate       DateTime @map("meal_date")
+  serviceName    String   @map("service_name")
+  restaurantName String?  @map("restaurant_name")
+  unit           String   @default("Pax") // Pax, Table (Mâm), etc.
+  quantity       Float    @default(0)
+  paxCount       Int      @default(0) @map("pax_count")
+  tableCount     Int      @default(0) @map("table_count")
+  unitPrice      Float    @map("unit_price")
+  amount         Float
+  confidence     Float    @default(1.0)
+  needsReview    Boolean  @default(false) @map("needs_review")
+  rawLine        String?  @map("raw_line")
+
+  @@map("booking_meals")
+}
+
+model BookingService {
+  id          String   @id @default(uuid())
+  bookingId   String   @map("booking_id")
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceType String   @map("service_type") // SPA, TRANSFER, TOUR, etc.
+  serviceName String   @map("service_name")
+  serviceDate DateTime @map("service_date")
+  unit        String   @default("Item")
+  quantity    Float    @default(1)
+  unitPrice   Float    @map("unit_price")
+  amount      Float
+  rawLine     String?  @map("raw_line")
+
+  @@map("booking_services")
+}
+
+model BookingPayment {
+  id               String   @id @default(uuid())
+  bookingId        String   @unique @map("booking_id")
+  booking          Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  depositAmount    Float    @default(0) @map("deposit_amount")
+  paidAmount       Float    @default(0) @map("paid_amount")
+  remainingAmount  Float    @default(0) @map("remaining_amount")
+  totalAmount      Float    @default(0) @map("total_amount")
+  paymentStatus    String   @default("UNPAID") @map("payment_status") // UNPAID, PARTIAL, PAID
+  vatRequired      Boolean  @default(false) @map("vat_required")
+  commissionAmount Float    @default(0) @map("commission_amount")
+  discountAmount   Float    @default(0) @map("discount_amount")
+
+  @@map("booking_payments")
+}
+
+model DailyStat {
+  id              String    @id @default(uuid())
+  importJobId     String    @map("import_job_id")
+  importJob       ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  statDate        DateTime  @map("stat_date")
+  checkinGuests   Int       @default(0) @map("checkin_guests")
+  checkoutGuests  Int       @default(0) @map("checkout_guests")
+  stayoverGuests  Int       @default(0) @map("stayover_guests")
+  cancelledGuests Int       @default(0) @map("cancelled_guests")
+  roomSold        Int       @default(0) @map("room_sold")
+  roomNights      Int       @default(0) @map("room_nights")
+  breakfastPax    Int       @default(0) @map("breakfast_pax")
+  lunchPax        Int       @default(0) @map("lunch_pax")
+  dinnerPax       Int       @default(0) @map("dinner_pax")
+  galaPax         Int       @default(0) @map("gala_pax")
+  bbqPax          Int       @default(0) @map("bbq_pax")
+  roomRevenue     Float     @default(0) @map("room_revenue")
+  foodRevenue     Float     @default(0) @map("food_revenue")
+  serviceRevenue  Float     @default(0) @map("service_revenue")
+  totalRevenue    Float     @default(0) @map("total_revenue")
+
+  @@map("daily_stats")
+}

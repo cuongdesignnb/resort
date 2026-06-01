@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: resort-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cuong
+      POSTGRES_PASSWORD: cuong_resort_password
+      POSTGRES_DB: resort_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: resort-web
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://cuong:cuong_resort_password@postgres:5432/resort_db?schema=public
+      - DEMO_MODE=true
+      - MOCK_GOOGLE_DRIVE_DIR=./mock_google_drive
+    depends_on:
+      - postgres
+    restart: always
+
+volumes:
+  postgres_data:
