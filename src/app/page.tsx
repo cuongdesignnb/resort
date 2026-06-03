@@ -248,13 +248,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           
           {/* Export Excel only for single month reports to avoid formatting/DB mismatches */}
           {!isAllTime && (
-            <Link
+            <a
               href={`/api/reports/excel?jobId=${activeJobId}`}
               className="glass-card hover:bg-[var(--border)] text-xs font-semibold px-4.5 py-2.5 flex items-center gap-2 transition-all cursor-pointer"
             >
               <Download className="h-4 w-4" />
               Xuất Báo Cáo Excel
-            </Link>
+            </a>
           )}
 
           <Link

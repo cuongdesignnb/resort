@@ -84,13 +84,13 @@ export default async function RevenueReportPage() {
             Phân tích chi tiết hạch toán doanh thu lưu trú, dịch vụ, hiệu suất sales và công nợ.
           </p>
         </div>
-        <Link
+        <a
           href={`/api/reports/excel?jobId=${latestJob.id}`}
           className="glass-card hover:bg-[var(--border)] text-xs font-semibold px-4 py-2 flex items-center gap-2 transition-all cursor-pointer"
         >
           <Download className="h-4 w-4" />
           Xuất Báo Cáo Excel
-        </Link>
+        </a>
       </div>
 
       {/* KPI Cards Row */}
