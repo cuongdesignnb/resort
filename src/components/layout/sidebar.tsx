@@ -64,6 +64,7 @@ export default function Sidebar() {
 
   const navItems = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Đặt Phòng Nhanh', href: '/bookings/new', icon: FileSpreadsheet },
     { name: 'Import Forecast', href: '/imports', icon: UploadCloud },
     { name: 'Forecast Grid', href: '/forecast', icon: Grid3X3 },
     { name: 'Bookings List', href: '/bookings', icon: CalendarDays },
